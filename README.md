@@ -21,8 +21,26 @@ Or install it yourself as:
     $ gem install easy_weibo
 
 ## Usage
+```
+EasyWeibo.configure do |config|
+  config.app_key = ""
+  config.app_secret = ""
+  config.redirect_uri = "https://api.weibo.com/oauth2/default.html"
+end
 
-TODO: Write usage instructions here
+@client = EasyWeibo::Client.new
+puts @client.authorize_url
+@client.code = "code"
+@client.token = "token"
+@client.statuses_share("foobar", "https://web.com", "#{EasyWeibo.root}/test.jpg")
+```
+
+## Todo
++ 异常处理
+
+```
+# {"error":"invalid_grant","error_code":21325,"request":"/oauth2/access_token","error_uri":"/oauth2/access_token","error_description":"invalid authorization code:"}
+```
 
 ## Development
 
