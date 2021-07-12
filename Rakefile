@@ -5,8 +5,8 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-require "rubocop/rake_task"
+task :default => :spec
 
-RuboCop::RakeTask.new
-
-task default: %i[spec rubocop]
+task :console do
+  exec "pry	-r easy_weibo -I ./lib"
+end
