@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-# require "pry"
+require "pry"
 
 RSpec.describe EasyWeibo do
   it "has a version number" do
@@ -17,13 +17,18 @@ RSpec.describe EasyWeibo do
       end
 
       @client = EasyWeibo::Client.new
+      @client.token = "token"
     end
 
-    it "token" do
+    it "authorize_url" do
       url = @client.authorize_url
       puts url
       expect(url.include?("wap")).to be true
       expect(url.include?(@app_key)).to be true
+    end
+
+    it "user timeline" do
+      @client.user_timeline "2715025067"
     end
   end
 end

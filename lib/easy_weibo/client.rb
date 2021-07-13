@@ -8,6 +8,7 @@ module EasyWeibo
     OAUTH2_AUTHORIZE_URL = "https://api.weibo.com/oauth2/authorize"
     OAUTH2_ACCESS_TOKEN_URL = "https://api.weibo.com/oauth2/access_token"
     STATUSES_SHARE_URL = "https://api.weibo.com/2/statuses/share.json"
+    USER_TIMELINE_URL = "https://api.weibo.com/2/statuses/user_timeline.json"
 
     attr_writer :token, :code
 
@@ -58,6 +59,26 @@ module EasyWeibo
       resp = HTTPX.plugin(:multipart).post(STATUSES_SHARE_URL, params: { access_token: token }, form: payload)
 
       r = ::JSON.parse(resp.body, quirks_mode: true)
+      yield r if block_given?
+      r
+    end
+
+    # https://open.weibo.com/wiki/2/statuses/user_timeline
+    def user_timeline(uid, options = {})
+      payload = {
+        uid: uid,
+        since_id: options.delete(:since_id) || 0, # 若指定此参数，则返回ID比since_id大的微博（即比时间晚的微博），默认为0。
+        max_id: options.delete(:max_id) || 0, # 若指定此参数，则返回ID小于或等于max_id的微博，默认为0。
+        count: options.delete(:count) || 20, # 单页返回的记录条数，最大不超过100，超过100以100处理，默认为20。
+        page: options.delete(:page) || 1, # 返回结果的页码，默认为1。
+        base_app: options.delete(:base_app) || 0, # 是否只获取当前应用的数据。0为否（所有数据），1为是（仅当前应用），默认为0。
+        feature: options.delete(:feature) || 0, # 过滤类型ID，0：全部、1：原创、2：图片、3：视频、4：音乐，默认为0。
+        trim_user: options.delete(:trim_user) || 0, # 返回值中user字段开关，0：返回完整user字段、1：user字段仅返回user_id，默认为0。
+      }
+
+      resp = HTTPX.get(USER_TIMELINE_URL, params: { access_token: token }, form: payload)
+      r = ::JSON.parse(resp.body, quirks_mode: true)
+      binding.pry
       yield r if block_given?
       r
     end
