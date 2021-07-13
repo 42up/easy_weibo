@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    easy_weibo (0.1.0)
+    easy_weibo (0.1.1)
       activesupport
       http-form_data
       httpx
