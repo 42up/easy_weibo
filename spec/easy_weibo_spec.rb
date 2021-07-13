@@ -17,6 +17,7 @@ RSpec.describe EasyWeibo do
       end
 
       @client = EasyWeibo::Client.new
+      # use token can short test time
       @client.token = "token"
     end
 
@@ -28,7 +29,16 @@ RSpec.describe EasyWeibo do
     end
 
     it "user timeline" do
-      @client.user_timeline "2715025067"
+      # request uid's value must be the current user
+      uid = "2715025067"
+      params = {
+        trim_user: 1
+      }
+      @client.user_timeline uid, params
+    end
+
+    it "users show" do
+      @client.users_show "2715025067"
     end
   end
 end

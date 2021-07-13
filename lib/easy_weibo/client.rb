@@ -9,6 +9,7 @@ module EasyWeibo
     OAUTH2_ACCESS_TOKEN_URL = "https://api.weibo.com/oauth2/access_token"
     STATUSES_SHARE_URL = "https://api.weibo.com/2/statuses/share.json"
     USER_TIMELINE_URL = "https://api.weibo.com/2/statuses/user_timeline.json"
+    USERS_SHOW_URL = "https://api.weibo.com/2/users/show.json"
 
     attr_writer :token, :code
 
@@ -65,7 +66,8 @@ module EasyWeibo
 
     # https://open.weibo.com/wiki/2/statuses/user_timeline
     def user_timeline(uid, options = {})
-      payload = {
+      params = {
+        access_token: token,
         uid: uid,
         since_id: options.delete(:since_id) || 0, # 若指定此参数，则返回ID比since_id大的微博（即比时间晚的微博），默认为0。
         max_id: options.delete(:max_id) || 0, # 若指定此参数，则返回ID小于或等于max_id的微博，默认为0。
@@ -76,9 +78,19 @@ module EasyWeibo
         trim_user: options.delete(:trim_user) || 0, # 返回值中user字段开关，0：返回完整user字段、1：user字段仅返回user_id，默认为0。
       }
 
-      resp = HTTPX.get(USER_TIMELINE_URL, params: { access_token: token }, form: payload)
+      resp = HTTPX.get(USER_TIMELINE_URL, params: params)
+
       r = ::JSON.parse(resp.body, quirks_mode: true)
-      binding.pry
+      yield r if block_given?
+      r
+    end
+
+    def users_show(uid)
+      params = { uid: uid, access_token: token }
+
+      resp = HTTPX.get(USERS_SHOW_URL, params: params)
+
+      r = ::JSON.parse(resp.body, quirks_mode: true)
       yield r if block_given?
       r
     end
