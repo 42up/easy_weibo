@@ -22,6 +22,8 @@ Or install it yourself as:
 
 ## Usage
 ```
+rails g easy_wechat:install
+
 EasyWeibo.configure do |config|
   config.app_key = ""
   config.app_secret = ""
